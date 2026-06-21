@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import type { PropertyImage } from "@/types/property";
@@ -16,6 +16,8 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
   const t = getDictionary(locale);
   const sorted = [...images].sort((a, b) => a.ordre - b.ordre);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const open = lightboxIndex !== null;
 
@@ -34,6 +36,23 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, sorted.length]);
 
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    function onScroll() {
+      const el = scrollRef.current;
+      if (!el) return;
+      const slideWidth = el.clientWidth;
+      if (!slideWidth) return;
+      const index = Math.round(el.scrollLeft / slideWidth);
+      setActiveSlide(Math.min(index, sorted.length - 1));
+    }
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [sorted.length]);
+
   if (sorted.length === 0) {
     return (
       <div className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl bg-gradient-to-br from-brand-100 to-accent-100 text-brand-700">
@@ -45,13 +64,71 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
   const cover = sorted[0];
   const rest = sorted.slice(1, 5);
 
+  function scrollToSlide(index: number) {
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollTo({
+      left: container.clientWidth * index,
+      behavior: "smooth",
+    });
+    setActiveSlide(index);
+  }
+
   return (
     <>
+      {/* Mobile : carrousel horizontal */}
+      <div className="md:hidden">
+        <div
+          ref={scrollRef}
+          className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {sorted.map((image, index) => (
+            <button
+              key={image.id}
+              type="button"
+              onClick={() => setLightboxIndex(index)}
+              className="relative aspect-[4/3] w-full shrink-0 snap-center overflow-hidden rounded-2xl"
+            >
+              <Image
+                src={image.url}
+                alt={`${title} ${index + 1}`}
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between px-1">
+          <div className="flex gap-1.5">
+            {sorted.map((image, index) => (
+              <button
+                key={image.id}
+                type="button"
+                onClick={() => scrollToSlide(index)}
+                aria-label={`Photo ${index + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  index === activeSlide
+                    ? "w-6 bg-brand-600"
+                    : "w-2 bg-slate-300"
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-xs font-medium text-ink-muted">
+            {activeSlide + 1} / {sorted.length}
+          </span>
+        </div>
+      </div>
+
+      {/* Desktop : grille */}
       {sorted.length === 1 ? (
         <button
           type="button"
           onClick={() => setLightboxIndex(0)}
-          className="group relative aspect-[16/9] w-full overflow-hidden rounded-2xl"
+          className="group relative hidden aspect-[16/9] w-full overflow-hidden rounded-2xl md:block"
         >
           <Image
             src={cover.url}
@@ -63,7 +140,7 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
           />
         </button>
       ) : (
-        <div className="grid gap-2 sm:gap-3 md:h-[480px] md:grid-cols-4 md:grid-rows-2">
+        <div className="hidden gap-2 sm:gap-3 md:grid md:h-[480px] md:grid-cols-4 md:grid-rows-2">
           <button
             type="button"
             onClick={() => setLightboxIndex(0)}
@@ -128,7 +205,7 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
                 i === null ? i : (i - 1 + sorted.length) % sorted.length
               )
             }
-            className="absolute left-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+            className="absolute left-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-4"
             aria-label="Précédent"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
@@ -142,7 +219,7 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
             </svg>
           </button>
 
-          <div className="relative h-[80vh] w-full max-w-5xl">
+          <div className="relative h-[70vh] w-full max-w-5xl sm:h-[80vh]">
             <Image
               src={sorted[lightboxIndex].url}
               alt={`${title} ${lightboxIndex + 1}`}
@@ -157,7 +234,7 @@ export default function Gallery({ images, title, locale }: GalleryProps) {
             onClick={() =>
               setLightboxIndex((i) => (i === null ? i : (i + 1) % sorted.length))
             }
-            className="absolute right-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+            className="absolute right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-4"
             aria-label="Suivant"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">

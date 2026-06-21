@@ -117,6 +117,8 @@ export const ar: Dictionary = {
     noDescription: "لا يوجد وصف.",
     amenities: "المرافق",
     location: "الموقع",
+    approxLocation: "موقع تقريبي: {address}، {city}.",
+    openInGoogleMaps: "فتح في Google Maps",
     reviews: "التقييمات",
     noReviews: "لا توجد تقييمات حالياً.",
     noAmenities: "لا توجد مرافق مسجلة لهذا العقار.",

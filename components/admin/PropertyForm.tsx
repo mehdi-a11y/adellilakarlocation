@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FormField, inputClassName } from "@/components/AuthForm";
+import LocationPicker from "@/components/admin/LocationPicker";
 import { useToast } from "@/components/ui/Toast";
 import { PROPERTY_AMENITIES, STORAGE_BUCKET } from "@/lib/constants";
 import { getStoragePathFromUrl } from "@/lib/storage";
@@ -329,6 +330,10 @@ export default function PropertyForm({
     }
   }
 
+  function updateCoordinates(latitude: number, longitude: number) {
+    setForm((current) => ({ ...current, latitude, longitude }));
+  }
+
   return (
     <div className="space-y-8">
       {error && (
@@ -336,6 +341,16 @@ export default function PropertyForm({
           {error}
         </div>
       )}
+
+      <LocationPicker
+        adresse={form.adresse}
+        ville={form.ville}
+        latitude={form.latitude}
+        longitude={form.longitude}
+        onAdresseChange={(value) => updateForm("adresse", value)}
+        onVilleChange={(value) => updateForm("ville", value)}
+        onCoordinatesChange={updateCoordinates}
+      />
 
       <section className="card-surface grid gap-4 p-6 md:grid-cols-2">
         <div className="md:col-span-2">
@@ -415,58 +430,6 @@ export default function PropertyForm({
             onChange={(event) =>
               updateForm(
                 "distance_mer_metres",
-                event.target.value ? Number(event.target.value) : null
-              )
-            }
-            className={inputClassName}
-          />
-        </FormField>
-
-        <FormField label="Adresse" id="adresse">
-          <input
-            id="adresse"
-            required
-            value={form.adresse}
-            onChange={(event) => updateForm("adresse", event.target.value)}
-            className={inputClassName}
-          />
-        </FormField>
-
-        <FormField label="Ville" id="ville">
-          <input
-            id="ville"
-            required
-            value={form.ville}
-            onChange={(event) => updateForm("ville", event.target.value)}
-            className={inputClassName}
-          />
-        </FormField>
-
-        <FormField label="Latitude" id="latitude">
-          <input
-            id="latitude"
-            type="number"
-            step="any"
-            value={form.latitude ?? ""}
-            onChange={(event) =>
-              updateForm(
-                "latitude",
-                event.target.value ? Number(event.target.value) : null
-              )
-            }
-            className={inputClassName}
-          />
-        </FormField>
-
-        <FormField label="Longitude" id="longitude">
-          <input
-            id="longitude"
-            type="number"
-            step="any"
-            value={form.longitude ?? ""}
-            onChange={(event) =>
-              updateForm(
-                "longitude",
                 event.target.value ? Number(event.target.value) : null
               )
             }

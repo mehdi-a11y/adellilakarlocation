@@ -176,6 +176,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
                   longitude={prop.longitude}
                   adresse={prop.adresse}
                   ville={prop.ville}
+                  locale={locale}
                 />
               </div>
             </section>

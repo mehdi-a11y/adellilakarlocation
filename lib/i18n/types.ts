@@ -107,6 +107,8 @@ export type Dictionary = {
     noDescription: string;
     amenities: string;
     location: string;
+    approxLocation: string;
+    openInGoogleMaps: string;
     reviews: string;
     noReviews: string;
     noAmenities: string;
