@@ -4,6 +4,7 @@ import PropertyFilters from "@/components/PropertyFilters";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/locale-server";
 import { PROPERTY_CARD_SELECT } from "@/lib/queries/properties";
+import { getUniqueWilayas } from "@/lib/wilayas";
 import { createClient } from "@/lib/supabase/server";
 import type { PropertyListItem } from "@/types/property";
 
@@ -81,7 +82,7 @@ export default async function BiensPage({
     if (!Number.isNaN(max)) query = query.lte("distance_mer_metres", max);
   }
   if (searchParams.ville?.trim()) {
-    query = query.ilike("ville", `%${searchParams.ville.trim()}%`);
+    query = query.eq("ville", searchParams.ville.trim());
   }
 
   const { data, count } = await query
@@ -97,9 +98,7 @@ export default async function BiensPage({
     .select("ville")
     .eq("statut", "actif");
 
-  const villes = Array.from(
-    new Set((villeRows ?? []).map((row) => row.ville).filter(Boolean))
-  ).sort();
+  const villes = getUniqueWilayas((villeRows ?? []).map((row) => row.ville));
 
   const initialFilters = {
     ville: searchParams.ville ?? "",

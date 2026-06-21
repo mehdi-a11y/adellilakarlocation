@@ -5,6 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { FormField, inputClassName } from "@/components/AuthForm";
 import { useToast } from "@/components/ui/Toast";
+import { getWilayaOptions } from "@/lib/wilayas";
 
 type LocationPickerProps = {
   adresse: string;
@@ -113,12 +114,17 @@ export default function LocationPicker({
   }, [latitude, longitude]);
 
   async function locateFromAddress() {
-    const query = [adresse.trim(), ville.trim()].filter(Boolean).join(", ");
-
-    if (!query) {
-      showToast("Renseignez l'adresse et la ville.", "error");
+    if (!ville.trim()) {
+      showToast("Sélectionnez une wilaya.", "error");
       return;
     }
+
+    if (!adresse.trim()) {
+      showToast("Renseignez l'adresse exacte.", "error");
+      return;
+    }
+
+    const query = `${adresse.trim()}, ${ville.trim()}, Algérie`;
 
     setSearching(true);
 
@@ -150,6 +156,8 @@ export default function LocationPicker({
       ? `https://www.google.com/maps?q=${latitude},${longitude}&hl=fr&z=16&output=embed`
       : null;
 
+  const wilayaOptions = getWilayaOptions(ville);
+
   return (
     <section className="card-surface space-y-4 p-6">
       <div>
@@ -157,31 +165,37 @@ export default function LocationPicker({
           Localisation exacte
         </h2>
         <p className="mt-1 text-sm text-slate-600">
-          Indiquez l&apos;adresse, localisez-la puis placez le marqueur au bon
-          endroit. Les clients verront cette position sur Google Maps.
+          Choisissez la wilaya, indiquez l&apos;adresse exacte puis placez le
+          marqueur. Les clients verront cette position sur Google Maps.
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <FormField label="Adresse" id="adresse">
+        <FormField label="Wilaya" id="wilaya">
+          <select
+            id="wilaya"
+            required
+            value={ville}
+            onChange={(event) => onVilleChange(event.target.value)}
+            className={inputClassName}
+          >
+            <option value="">Sélectionner une wilaya</option>
+            {wilayaOptions.map((wilaya) => (
+              <option key={wilaya} value={wilaya}>
+                {wilaya}
+              </option>
+            ))}
+          </select>
+        </FormField>
+
+        <FormField label="Adresse exacte" id="adresse">
           <input
             id="adresse"
             required
             value={adresse}
             onChange={(event) => onAdresseChange(event.target.value)}
             className={inputClassName}
-            placeholder="Ex. Résidence Les Pins, bâtiment B"
-          />
-        </FormField>
-
-        <FormField label="Ville" id="ville">
-          <input
-            id="ville"
-            required
-            value={ville}
-            onChange={(event) => onVilleChange(event.target.value)}
-            className={inputClassName}
-            placeholder="Ex. Tipaza"
+            placeholder="Ex. Résidence Les Pins, bâtiment B, commune..."
           />
         </FormField>
       </div>

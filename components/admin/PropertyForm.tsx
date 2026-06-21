@@ -229,6 +229,19 @@ export default function PropertyForm({
 
   async function saveProperty(statut: PropertyStatus) {
     setError(null);
+
+    if (!form.ville.trim()) {
+      setError("Sélectionnez une wilaya.");
+      showToast("Sélectionnez une wilaya.", "error");
+      return;
+    }
+
+    if (!form.adresse.trim()) {
+      setError("Renseignez l'adresse exacte.");
+      showToast("Renseignez l'adresse exacte.", "error");
+      return;
+    }
+
     setLoading(true);
 
     const supabase = createClient();

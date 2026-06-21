@@ -6,9 +6,13 @@ import { useLocale } from "@/components/providers/LocaleProvider";
 
 type SearchBarProps = {
   variant?: "hero" | "compact";
+  availableWilayas?: string[];
 };
 
-export default function SearchBar({ variant = "hero" }: SearchBarProps) {
+export default function SearchBar({
+  variant = "hero",
+  availableWilayas = [],
+}: SearchBarProps) {
   const router = useRouter();
   const { t } = useLocale();
   const [ville, setVille] = useState("");
@@ -35,12 +39,18 @@ export default function SearchBar({ variant = "hero" }: SearchBarProps) {
         <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
           {t.search.destination}
         </span>
-        <input
+        <select
           value={ville}
           onChange={(event) => setVille(event.target.value)}
-          placeholder={t.search.destinationPlaceholder}
-          className="bg-transparent text-sm text-ink outline-none placeholder:text-slate-400"
-        />
+          className="bg-transparent text-sm text-ink outline-none"
+        >
+          <option value="">{t.search.allWilayas}</option>
+          {availableWilayas.map((wilaya) => (
+            <option key={wilaya} value={wilaya}>
+              {wilaya}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className="flex flex-col gap-1 rounded-xl px-3 py-2 text-start transition hover:bg-slate-50">

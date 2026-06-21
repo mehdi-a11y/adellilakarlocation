@@ -7,9 +7,10 @@ import { formatPrice } from "@/lib/i18n";
 
 type Hero3DProps = {
   available: number;
+  availableWilayas: string[];
 };
 
-export default function Hero3D({ available }: Hero3DProps) {
+export default function Hero3D({ available, availableWilayas }: Hero3DProps) {
   const { locale, t } = useLocale();
   const stageRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
@@ -70,7 +71,7 @@ export default function Hero3D({ available }: Hero3DProps) {
           <p className="mt-6 max-w-lg text-lg text-white/80">{t.home.heroSubtitle}</p>
 
           <div className="mt-9 max-w-2xl">
-            <SearchBar />
+            <SearchBar availableWilayas={availableWilayas} />
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-white/75">

@@ -36,6 +36,7 @@ export type Dictionary = {
   search: {
     destination: string;
     destinationPlaceholder: string;
+    allWilayas: string;
     propertyType: string;
     travelers: string;
     any: string;
@@ -86,6 +87,8 @@ export type Dictionary = {
     open: string;
     apply: string;
     reset: string;
+    wilaya: string;
+    allWilayas: string;
     city: string;
     allCities: string;
     type: string;

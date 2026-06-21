@@ -4,6 +4,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/locale-server";
 import { PROPERTY_LIST_SELECT } from "@/lib/queries/properties";
+import { getUniqueWilayas } from "@/lib/wilayas";
 import { createClient } from "@/lib/supabase/server";
 import type { PropertyListItem } from "@/types/property";
 
@@ -21,7 +22,15 @@ export default async function Home() {
     .order("created_at", { ascending: false })
     .limit(6);
 
+  const { data: wilayaRows } = await supabase
+    .from("properties")
+    .select("ville")
+    .eq("statut", "actif");
+
   const featured = (data ?? []) as PropertyListItem[];
+  const availableWilayas = getUniqueWilayas(
+    (wilayaRows ?? []).map((row) => row.ville)
+  );
 
   const atouts = [
     t.home.atouts.selected,
@@ -32,7 +41,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero3D available={featured.length} />
+      <Hero3D available={featured.length} availableWilayas={availableWilayas} />
 
       <section className="bg-white py-20">
         <div className="container">

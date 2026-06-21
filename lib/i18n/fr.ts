@@ -31,7 +31,8 @@ export const fr: Dictionary = {
   },
   search: {
     destination: "Destination",
-    destinationPlaceholder: "Ville, wilaya...",
+    destinationPlaceholder: "Choisir une wilaya",
+    allWilayas: "Toutes les wilayas",
     propertyType: "Type de bien",
     travelers: "Voyageurs",
     any: "Indifférent",
@@ -99,6 +100,8 @@ export const fr: Dictionary = {
     reset: "Réinitialiser",
     city: "Ville",
     allCities: "Toutes les villes",
+    wilaya: "Wilaya",
+    allWilayas: "Toutes les wilayas",
     type: "Type",
     pool: "Piscine",
     poolOnly: "Avec piscine uniquement",

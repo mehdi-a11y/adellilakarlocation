@@ -31,7 +31,8 @@ export const ar: Dictionary = {
   },
   search: {
     destination: "الوجهة",
-    destinationPlaceholder: "مدينة، ولاية...",
+    destinationPlaceholder: "اختر ولاية",
+    allWilayas: "كل الولايات",
     propertyType: "نوع العقار",
     travelers: "المسافرون",
     any: "غير محدد",
@@ -98,6 +99,8 @@ export const ar: Dictionary = {
     reset: "إعادة تعيين",
     city: "المدينة",
     allCities: "كل المدن",
+    wilaya: "الولاية",
+    allWilayas: "كل الولايات",
     type: "النوع",
     pool: "مسبح",
     poolOnly: "مع مسبح فقط",

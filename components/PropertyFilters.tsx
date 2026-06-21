@@ -191,13 +191,13 @@ export default function PropertyFilters({ villes, initial }: PropertyFiltersProp
       </div>
 
       <div className="border-t border-slate-100 pt-5">
-        <h3 className="text-sm font-semibold text-ink">{t.filters.city}</h3>
+        <h3 className="text-sm font-semibold text-ink">{t.filters.wilaya}</h3>
         <select
           value={ville}
           onChange={(event) => setVille(event.target.value)}
           className="input-field mt-3"
         >
-          <option value="">{t.filters.allCities}</option>
+          <option value="">{t.filters.allWilayas}</option>
           {villes.map((item) => (
             <option key={item} value={item}>
               {item}
