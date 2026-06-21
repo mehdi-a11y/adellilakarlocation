@@ -2,26 +2,187 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #0f172a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  [dir="rtl"] body {
+    font-family: var(--font-arabic), system-ui, sans-serif;
+  }
+
+  [dir="rtl"] .heading-display {
+    font-family: var(--font-arabic), Georgia, serif;
+  }
+
+  ::selection {
+    background-color: #bcd3ff;
+    color: #152152;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-700 text-white shadow-soft hover:bg-brand-800 hover:shadow-card;
+  }
+
+  .btn-secondary {
+    @apply btn border border-slate-200 bg-white text-ink hover:border-slate-300 hover:bg-slate-50;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-muted hover:bg-slate-100 hover:text-ink;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+  }
+
+  .card-surface {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-soft;
+  }
+
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-700;
+  }
+
+  .heading-display {
+    @apply font-display font-semibold tracking-tight text-ink;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Perspective 3D */
+  .perspective {
+    perspective: 1400px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Dégradé bleu animé pour le hero / sections sombres */
+  .bg-mesh-blue {
+    background-color: #0b1220;
+    background-image:
+      radial-gradient(at 18% 22%, rgba(51, 102, 255, 0.55) 0px, transparent 45%),
+      radial-gradient(at 82% 18%, rgba(6, 182, 212, 0.42) 0px, transparent 45%),
+      radial-gradient(at 70% 80%, rgba(29, 52, 135, 0.6) 0px, transparent 50%),
+      radial-gradient(at 25% 85%, rgba(99, 102, 241, 0.38) 0px, transparent 45%);
+    background-size: 160% 160%;
+  }
+
+  .text-gradient-blue {
+    background: linear-gradient(110deg, #8eb6ff 0%, #67e8f9 55%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .shadow-glow-blue {
+    box-shadow: 0 20px 60px rgba(51, 102, 255, 0.35);
+  }
+}
+
+/* react-day-picker — calendrier admin */
+.availability-calendar .rdp {
+  --rdp-accent-color: #1f4cef;
+  margin: 0;
+}
+
+.availability-calendar .rdp-day {
+  border-radius: 0.5rem;
+}
+
+.availability-calendar .day-booked {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.availability-calendar .day-blocked:not(.day-booked) {
+  background-color: #9ca3af !important;
+  color: #ffffff !important;
+}
+
+.availability-calendar .rdp-day_disabled {
+  opacity: 0.35;
+}
+
+/* react-day-picker — calendrier de réservation (lecture + sélection) */
+.booking-calendar .rdp {
+  --rdp-accent-color: #1f4cef;
+  --rdp-background-color: #d9e6ff;
+  margin: 0;
+}
+
+.booking-calendar .rdp-day {
+  border-radius: 0.5rem;
+}
+
+.booking-calendar .rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected) {
+  color: #0d9488;
+  font-weight: 600;
+}
+
+.booking-calendar .day-unavailable {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  text-decoration: line-through;
+}
+
+.booking-calendar .rdp-day_disabled {
+  opacity: 0.45;
 }

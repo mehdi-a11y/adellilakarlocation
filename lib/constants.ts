@@ -1,0 +1,19 @@
+export const PROPERTY_AMENITIES = [
+  "Wifi",
+  "Climatisation",
+  "Parking",
+  "Cuisine équipée",
+  "Lave-linge",
+  "Sèche-linge",
+  "TV",
+  "Jardin",
+  "Barbecue",
+  "Vue mer",
+  "Terrasse",
+  "Chauffage",
+] as const;
+
+export const STORAGE_BUCKET = "property-images";
+
+// Numéro WhatsApp de contact (format international sans +, ni espaces)
+export const WHATSAPP_NUMBER = "213000000000";

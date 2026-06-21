@@ -1,5 +1,5 @@
 {
-  "name": "adel-immobilier-temp",
+  "name": "adel-immobilier",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,18 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "date-fns": "^3.6.0",
+    "next": "14.2.35",
     "react": "^18",
+    "react-day-picker": "^8.10.2",
     "react-dom": "^18",
-    "next": "14.2.35"
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.35"
+    "typescript": "^5"
   }
 }

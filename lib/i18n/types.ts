@@ -1,0 +1,164 @@
+export type Locale = "fr" | "ar";
+
+export const LOCALES: Locale[] = ["fr", "ar"];
+export const DEFAULT_LOCALE: Locale = "fr";
+export const LOCALE_COOKIE = "adel_locale";
+
+export type Dictionary = {
+  common: {
+    perNight: string;
+    persons: string;
+    pers: string;
+    discover: string;
+    photoSoon: string;
+    noPhoto: string;
+    pool: string;
+    villa: string;
+    apartment: string;
+    all: string;
+    search: string;
+    back: string;
+    retry: string;
+    home: string;
+    night: string;
+    nights: string;
+  };
+  nav: {
+    home: string;
+    properties: string;
+    whyUs: string;
+    contact: string;
+    adminSpace: string;
+    dashboard: string;
+    logout: string;
+    menu: string;
+  };
+  search: {
+    destination: string;
+    destinationPlaceholder: string;
+    propertyType: string;
+    travelers: string;
+    any: string;
+    peoplePlus: string;
+    submit: string;
+  };
+  home: {
+    heroBadge: string;
+    heroTitle1: string;
+    heroTitle2: string;
+    heroSubtitle: string;
+    available: string;
+    availableLabel: string;
+    noFees: string;
+    featuredEyebrow: string;
+    featuredTitle: string;
+    viewAll: string;
+    emptyFeatured: string;
+    whyEyebrow: string;
+    whyTitle: string;
+    whySubtitle: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    explore: string;
+    contactUs: string;
+    atouts: {
+      selected: { title: string; desc: string };
+      seaside: { title: string; desc: string };
+      booking: { title: string; desc: string };
+      support: { title: string; desc: string };
+    };
+  };
+  properties: {
+    catalogue: string;
+    title: string;
+    subtitle: string;
+    found: string;
+    foundPlural: string;
+    page: string;
+    empty: string;
+    emptyHint: string;
+    reset: string;
+    prev: string;
+    next: string;
+  };
+  filters: {
+    title: string;
+    open: string;
+    apply: string;
+    reset: string;
+    city: string;
+    allCities: string;
+    type: string;
+    pool: string;
+    poolOnly: string;
+    price: string;
+    priceMin: string;
+    priceMax: string;
+    distance: string;
+    distanceMax: string;
+    capacity: string;
+  };
+  property: {
+    backToList: string;
+    capacity: string;
+    sea: string;
+    type: string;
+    description: string;
+    noDescription: string;
+    amenities: string;
+    location: string;
+    reviews: string;
+    noReviews: string;
+    noAmenities: string;
+    distanceSea: string;
+    distanceKm: string;
+  };
+  booking: {
+    perNight: string;
+    available: string;
+    unavailable: string;
+    guests: string;
+    chooseDates: string;
+    bookNow: string;
+    sendRequest: string;
+    sending: string;
+    cancel: string;
+    total: string;
+    whatsapp: string;
+    successTitle: string;
+    successMessage: string;
+    name: string;
+    phone: string;
+    email: string;
+    message: string;
+    errorContact: string;
+    errorDates: string;
+    errorRequired: string;
+    errorSubmit: string;
+    whatsappIntro: string;
+    whatsappDates: string;
+    whatsappGuests: string;
+    whatsappTotal: string;
+  };
+  footer: {
+    tagline: string;
+    navigation: string;
+    categories: string;
+    withPool: string;
+    villas: string;
+    apartments: string;
+    rights: string;
+    subtitle: string;
+  };
+  notFound: {
+    title: string;
+    message: string;
+    home: string;
+    properties: string;
+  };
+  error: {
+    title: string;
+    message: string;
+  };
+  amenities: Record<string, string>;
+};
