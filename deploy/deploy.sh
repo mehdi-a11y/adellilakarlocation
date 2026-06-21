@@ -33,7 +33,10 @@ echo "→ Build Next.js (production)..."
 npm run build
 
 echo "→ Préparation du mode standalone..."
-cp -r public .next/standalone/public
+mkdir -p .next/standalone/public
+if [ -d public ] && [ "$(ls -A public 2>/dev/null)" ]; then
+  cp -r public/. .next/standalone/public/
+fi
 cp -r .next/static .next/standalone/.next/static
 
 echo "→ Redémarrage PM2..."

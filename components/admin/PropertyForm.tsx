@@ -26,6 +26,14 @@ type PropertyFormProps = {
   initialAmenities?: string[];
 };
 
+function generateId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 const defaultForm: PropertyFormData = {
   titre: "",
   description: "",
@@ -104,13 +112,21 @@ export default function PropertyForm({
       return;
     }
 
-    const nextImages = Array.from(files).map((file) => ({
-      tempId: crypto.randomUUID(),
-      file,
-      preview: URL.createObjectURL(file),
-    }));
+    try {
+      const nextImages = Array.from(files).map((file) => ({
+        tempId: generateId(),
+        file,
+        preview: URL.createObjectURL(file),
+      }));
 
-    setNewImages((current) => [...current, ...nextImages]);
+      setNewImages((current) => [...current, ...nextImages]);
+    } catch (fileError) {
+      const message =
+        fileError instanceof Error
+          ? fileError.message
+          : "Impossible d'afficher l'aperçu de l'image.";
+      showToast(message, "error");
+    }
   }
 
   function moveExistingImage(index: number, direction: -1 | 1) {
@@ -164,7 +180,7 @@ export default function PropertyForm({
   async function uploadImage(propertyId: string, file: File, ordre: number) {
     const supabase = createClient();
     const extension = file.name.split(".").pop() || "jpg";
-    const path = `${propertyId}/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+    const path = `${propertyId}/${Date.now()}-${generateId()}.${extension}`;
 
     const { error: uploadError } = await supabase.storage
       .from(STORAGE_BUCKET)
@@ -479,7 +495,10 @@ export default function PropertyForm({
           type="file"
           accept="image/*"
           multiple
-          onChange={(event) => handleFilesSelected(event.target.files)}
+          onChange={(event) => {
+            handleFilesSelected(event.target.files);
+            event.target.value = "";
+          }}
           className="mt-4 block w-full text-sm text-slate-600"
         />
 
@@ -532,12 +551,11 @@ export default function PropertyForm({
               className="overflow-hidden rounded-lg border border-dashed border-brand-300"
             >
               <div className="relative h-40">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={image.preview}
                   alt="Nouvelle photo"
-                  fill
-                  className="object-cover"
-                  unoptimized
+                  className="h-full w-full object-cover"
                 />
               </div>
               <div className="flex items-center justify-between gap-2 p-2">
