@@ -4,6 +4,7 @@ import PropertyCard from "@/components/PropertyCard";
 import BuildingCard from "@/components/BuildingCard";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/locale-server";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 import { BUILDING_CARD_SELECT } from "@/lib/queries/buildings";
 import { PROPERTY_LIST_SELECT } from "@/lib/queries/properties";
 import { getUniqueWilayas } from "@/lib/wilayas";
@@ -155,7 +156,7 @@ export default async function Home() {
                   {t.home.explore}
                 </Link>
                 <a
-                  href="https://wa.me/213000000000"
+                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn border border-white/30 text-white hover:bg-white/10"

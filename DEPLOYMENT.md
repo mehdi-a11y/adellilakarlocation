@@ -109,8 +109,18 @@ pm2 save
 Quand le DNS pointe bien vers le VPS :
 
 ```bash
-certbot --nginx -d votre-domaine.com -d www.votre-domaine.com
+cd /var/www/adel-immobilier
+git pull origin main
+CERTBOT_EMAIL=votre@email.com bash deploy/setup-ssl.sh
 ```
+
+Ou manuellement :
+
+```bash
+certbot --nginx -d adellilakarlocation.site -d www.adellilakarlocation.site
+```
+
+> **Safari « connexion non privée »** : le site est en HTTP mais Safari tente HTTPS. Sans certificat Let's Encrypt pour votre domaine, le port 443 peut servir un autre site du VPS avec un mauvais certificat. Exécutez la commande ci-dessus une fois.
 
 ---
 

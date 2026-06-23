@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 const year = new Date().getFullYear();
 
@@ -80,7 +81,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-ink-muted">
               <li>
                 <a
-                  href="https://wa.me/213000000000"
+                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   className="transition hover:text-brand-700"
                   target="_blank"
                   rel="noopener noreferrer"
