@@ -48,3 +48,27 @@ with check (public.is_admin());
 create policy "Admin supprime les demandes"
 on public.booking_requests for delete
 using (public.is_admin());
+
+-- Libère automatiquement les dates réservées quand une demande est supprimée
+create or replace function public.release_availability_on_booking_request_delete()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from public.availability_blocks
+  where property_id = old.property_id
+    and raison = 'reserve'
+    and date_debut <= old.date_fin
+    and date_fin >= old.date_debut;
+
+  return old;
+end;
+$$;
+
+drop trigger if exists booking_requests_release_availability on public.booking_requests;
+
+create trigger booking_requests_release_availability
+before delete on public.booking_requests
+for each row execute function public.release_availability_on_booking_request_delete();

@@ -2,6 +2,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import AmenityList from "@/components/property/AmenityList";
+import FacebookViewContent from "@/components/analytics/FacebookViewContent";
 import Gallery from "@/components/property/Gallery";
 import PropertyMap from "@/components/property/PropertyMap";
 import ReviewsSection from "@/components/property/ReviewsSection";
@@ -89,6 +90,12 @@ export default async function PropertyDetailPage({ params }: PageProps) {
 
   return (
     <main className="bg-white">
+      <FacebookViewContent
+        propertyId={prop.id}
+        title={prop.titre}
+        type={prop.type}
+        price={prop.prix_nuit}
+      />
       <div className="container py-8">
         <Link href="/biens" className="text-sm text-brand-700 hover:underline">
           {t.property.backToList}

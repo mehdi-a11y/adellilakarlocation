@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo, Inter, Playfair_Display } from "next/font/google";
+import FacebookPixel from "@/components/analytics/FacebookPixel";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { LocaleProvider } from "@/components/providers/LocaleProvider";
@@ -51,6 +52,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${cairo.variable}`}
     >
       <body className="flex min-h-screen flex-col bg-white font-sans text-ink antialiased">
+        <FacebookPixel />
         <LocaleProvider initialLocale={locale}>
           <Header />
           <div className="flex-1">{children}</div>

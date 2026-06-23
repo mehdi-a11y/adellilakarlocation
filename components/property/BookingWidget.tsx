@@ -15,6 +15,7 @@ import {
 } from "@/lib/dates";
 import { formatPrice } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
+import { trackFacebookLead } from "@/lib/facebook-pixel";
 
 type Range = { date_debut: string; date_fin: string };
 
@@ -150,6 +151,11 @@ export default function BookingWidget({
 
     setSubmitted(true);
     setShowForm(false);
+    trackFacebookLead({
+      contentName: titre,
+      value: total,
+      currency: "DZD",
+    });
   }
 
   return (

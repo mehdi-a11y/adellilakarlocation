@@ -156,6 +156,7 @@ export default async function AdminReservationsPage({
                   dateDebut={request.date_debut}
                   dateFin={request.date_fin}
                   statut={request.statut}
+                  clientName={request.nom}
                 />
               </div>
             </div>

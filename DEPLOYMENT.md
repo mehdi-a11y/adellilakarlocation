@@ -86,7 +86,10 @@ Contenu (copiez depuis `.env.production.example`) :
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon
+NEXT_PUBLIC_FACEBOOK_PIXEL_ID=123456789012345
 ```
+
+> **Meta Pixel :** récupérez l’ID dans [Meta Events Manager](https://business.facebook.com/events_manager) → votre pixel → Paramètres. Sans cette variable, le pixel n’est pas chargé.
 
 > **Important :** pas de `/rest/v1/` dans l’URL Supabase.
 
