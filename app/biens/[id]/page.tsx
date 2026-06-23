@@ -196,7 +196,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
           {/* Panneau réservation */}
           <div className="lg:sticky lg:top-20 lg:self-start">
             <BookingWidget
-              propertyId={prop.id}
+              target={{ kind: "property", propertyId: prop.id }}
               titre={prop.titre}
               ville={prop.ville}
               prixNuit={prop.prix_nuit}

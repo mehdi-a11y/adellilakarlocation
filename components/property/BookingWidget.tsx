@@ -19,8 +19,12 @@ import { trackFacebookLead } from "@/lib/facebook-pixel";
 
 type Range = { date_debut: string; date_fin: string };
 
+export type BookingTarget =
+  | { kind: "property"; propertyId: string }
+  | { kind: "unit"; buildingUnitId: string };
+
 type BookingWidgetProps = {
-  propertyId: string;
+  target: BookingTarget;
   titre: string;
   ville: string;
   prixNuit: number;
@@ -38,7 +42,7 @@ function formatDateLabel(date: Date, locale: "fr" | "ar") {
 }
 
 export default function BookingWidget({
-  propertyId,
+  target,
   titre,
   ville,
   prixNuit,
@@ -130,8 +134,8 @@ export default function BookingWidget({
 
     setSubmitting(true);
     const supabase = createClient();
-    const { error: insertError } = await supabase.from("booking_requests").insert({
-      property_id: propertyId,
+
+    const commonPayload = {
       nom: contact.nom.trim(),
       telephone: contact.telephone.trim(),
       email: contact.email.trim() || null,
@@ -140,7 +144,22 @@ export default function BookingWidget({
       nb_personnes: guests,
       prix_total: total,
       message: contact.message.trim() || null,
-    });
+    };
+
+    const insertResult =
+      target.kind === "property"
+        ? await supabase.from("booking_requests").insert({
+            ...commonPayload,
+            property_id: target.propertyId,
+            building_unit_id: null,
+          })
+        : await supabase.from("booking_requests").insert({
+            ...commonPayload,
+            building_unit_id: target.buildingUnitId,
+            property_id: null,
+          });
+
+    const insertError = insertResult.error;
 
     setSubmitting(false);
 

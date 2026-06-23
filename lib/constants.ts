@@ -14,6 +14,7 @@ export const PROPERTY_AMENITIES = [
 ] as const;
 
 export const STORAGE_BUCKET = "property-images";
+export const BUILDING_STORAGE_PREFIX = "buildings";
 
 // Numéro WhatsApp de contact (format international sans +, ni espaces)
 export const WHATSAPP_NUMBER = "213000000000";

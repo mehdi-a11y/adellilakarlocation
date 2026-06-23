@@ -2,7 +2,8 @@ import type { BookingStatus } from "./index";
 
 export type BookingRequest = {
   id: string;
-  property_id: string;
+  property_id: string | null;
+  building_unit_id: string | null;
   nom: string;
   telephone: string;
   email: string | null;
@@ -17,4 +18,8 @@ export type BookingRequest = {
 
 export type BookingRequestWithProperty = BookingRequest & {
   properties: { titre: string; ville: string } | null;
+  building_units: {
+    label: string;
+    buildings: { titre: string; ville: string } | null;
+  } | null;
 };

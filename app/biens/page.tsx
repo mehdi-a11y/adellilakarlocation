@@ -1,11 +1,14 @@
 import Link from "next/link";
 import PropertyCard from "@/components/PropertyCard";
+import BuildingCard from "@/components/BuildingCard";
 import PropertyFilters from "@/components/PropertyFilters";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/locale-server";
+import { BUILDING_CARD_SELECT } from "@/lib/queries/buildings";
 import { PROPERTY_CARD_SELECT } from "@/lib/queries/properties";
 import { getUniqueWilayas } from "@/lib/wilayas";
 import { createClient } from "@/lib/supabase/server";
+import type { BuildingListItem } from "@/types/building";
 import type { PropertyListItem } from "@/types/property";
 
 export const metadata = {
@@ -93,12 +96,35 @@ export default async function BiensPage({
   const total = count ?? 0;
   const totalPages = Math.max(Math.ceil(total / PAGE_SIZE), 1);
 
+  let buildingsQuery = supabase
+    .from("buildings")
+    .select(BUILDING_CARD_SELECT)
+    .eq("statut", "actif");
+
+  if (searchParams.ville?.trim()) {
+    buildingsQuery = buildingsQuery.eq("ville", searchParams.ville.trim());
+  }
+
+  const { data: buildingRows } = await buildingsQuery.order("created_at", {
+    ascending: false,
+  });
+
+  const buildings = (buildingRows ?? []) as BuildingListItem[];
+
   const { data: villeRows } = await supabase
     .from("properties")
     .select("ville")
     .eq("statut", "actif");
 
-  const villes = getUniqueWilayas((villeRows ?? []).map((row) => row.ville));
+  const { data: buildingVilleRows } = await supabase
+    .from("buildings")
+    .select("ville")
+    .eq("statut", "actif");
+
+  const villes = getUniqueWilayas([
+    ...(villeRows ?? []).map((row) => row.ville),
+    ...(buildingVilleRows ?? []).map((row) => row.ville),
+  ]);
 
   const initialFilters = {
     ville: searchParams.ville ?? "",
@@ -132,15 +158,17 @@ export default async function BiensPage({
             <div>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-ink-muted">
-                  {total}{" "}
-                  {total > 1 ? t.properties.foundPlural : t.properties.found}
+                  {buildings.length + total}{" "}
+                  {buildings.length + total > 1
+                    ? t.properties.foundPlural
+                    : t.properties.found}
                 </p>
                 <p className="text-sm text-ink-muted">
                   {t.properties.page} {page} / {totalPages}
                 </p>
               </div>
 
-              {properties.length === 0 ? (
+              {properties.length === 0 && buildings.length === 0 ? (
                 <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-20 text-center">
                   <p className="font-display text-lg text-ink">{t.properties.empty}</p>
                   <p className="mt-2 text-sm text-ink-muted">{t.properties.emptyHint}</p>
@@ -151,6 +179,14 @@ export default async function BiensPage({
               ) : (
                 <>
                   <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    {buildings.map((building, index) => (
+                      <BuildingCard
+                        key={building.id}
+                        building={building}
+                        locale={locale}
+                        priority={index < 3}
+                      />
+                    ))}
                     {properties.map((property) => (
                       <PropertyCard
                         key={property.id}

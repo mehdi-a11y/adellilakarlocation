@@ -41,6 +41,19 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    href: "/admin/immeubles",
+    label: "Immeubles",
+    icon: (
+      <path
+        d="M4 21V9l8-5 8 5v12M9 21v-6h6v6"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
     href: "/admin/reservations",
     label: "Réservations",
     icon: (

@@ -1,18 +1,34 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+type ReleaseTarget = {
+  propertyId?: string | null;
+  buildingUnitId?: string | null;
+  dateDebut: string;
+  dateFin: string;
+};
+
 export async function releaseReservationAvailability(
   supabase: SupabaseClient,
-  propertyId: string,
-  dateDebut: string,
-  dateFin: string
+  target: ReleaseTarget
 ) {
-  const { data: blocks, error: selectError } = await supabase
+  const { propertyId, buildingUnitId, dateDebut, dateFin } = target;
+
+  let query = supabase
     .from("availability_blocks")
     .select("id")
-    .eq("property_id", propertyId)
     .eq("raison", "reserve")
     .lte("date_debut", dateFin)
     .gte("date_fin", dateDebut);
+
+  if (buildingUnitId) {
+    query = query.eq("building_unit_id", buildingUnitId);
+  } else if (propertyId) {
+    query = query.eq("property_id", propertyId);
+  } else {
+    return { error: null, released: 0 };
+  }
+
+  const { data: blocks, error: selectError } = await query;
 
   if (selectError) {
     return { error: selectError, released: 0 };

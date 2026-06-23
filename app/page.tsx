@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Hero3D from "@/components/Hero3D";
 import PropertyCard from "@/components/PropertyCard";
+import BuildingCard from "@/components/BuildingCard";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/locale-server";
+import { BUILDING_CARD_SELECT } from "@/lib/queries/buildings";
 import { PROPERTY_LIST_SELECT } from "@/lib/queries/properties";
 import { getUniqueWilayas } from "@/lib/wilayas";
 import { createClient } from "@/lib/supabase/server";
+import type { BuildingListItem } from "@/types/building";
 import type { PropertyListItem } from "@/types/property";
 
 export const revalidate = 60;
@@ -27,10 +30,25 @@ export default async function Home() {
     .select("ville")
     .eq("statut", "actif");
 
+  const { data: buildingWilayaRows } = await supabase
+    .from("buildings")
+    .select("ville")
+    .eq("statut", "actif");
+
   const featured = (data ?? []) as PropertyListItem[];
-  const availableWilayas = getUniqueWilayas(
-    (wilayaRows ?? []).map((row) => row.ville)
-  );
+  const availableWilayas = getUniqueWilayas([
+    ...(wilayaRows ?? []).map((row) => row.ville),
+    ...(buildingWilayaRows ?? []).map((row) => row.ville),
+  ]);
+
+  const { data: buildingData } = await supabase
+    .from("buildings")
+    .select(BUILDING_CARD_SELECT)
+    .eq("statut", "actif")
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  const featuredBuildings = (buildingData ?? []) as BuildingListItem[];
 
   const atouts = [
     t.home.atouts.selected,
@@ -41,7 +59,10 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero3D available={featured.length} availableWilayas={availableWilayas} />
+      <Hero3D
+        available={featured.length + featuredBuildings.length}
+        availableWilayas={availableWilayas}
+      />
 
       <section className="bg-white py-20">
         <div className="container">
@@ -57,12 +78,20 @@ export default async function Home() {
             </Link>
           </div>
 
-          {featured.length === 0 ? (
+          {featured.length === 0 && featuredBuildings.length === 0 ? (
             <div className="mt-12 rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center">
               <p className="text-ink-muted">{t.home.emptyFeatured}</p>
             </div>
           ) : (
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredBuildings.map((building, index) => (
+                <BuildingCard
+                  key={building.id}
+                  building={building}
+                  locale={locale}
+                  priority={index < 2}
+                />
+              ))}
               {featured.map((property, index) => (
                 <PropertyCard
                   key={property.id}

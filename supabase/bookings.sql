@@ -30,6 +30,11 @@ create index if not exists booking_requests_created_at_idx
 
 alter table public.booking_requests enable row level security;
 
+drop policy if exists "Demande de réservation publique" on public.booking_requests;
+drop policy if exists "Admin consulte les demandes" on public.booking_requests;
+drop policy if exists "Admin met à jour les demandes" on public.booking_requests;
+drop policy if exists "Admin supprime les demandes" on public.booking_requests;
+
 -- Tout le monde (visiteur anonyme) peut envoyer une demande
 create policy "Demande de réservation publique"
 on public.booking_requests for insert

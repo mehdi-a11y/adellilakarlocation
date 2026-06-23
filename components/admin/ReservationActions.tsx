@@ -10,7 +10,8 @@ import type { BookingStatus } from "@/types";
 
 type ReservationActionsProps = {
   requestId: string;
-  propertyId: string;
+  propertyId?: string | null;
+  buildingUnitId?: string | null;
   dateDebut: string;
   dateFin: string;
   statut: BookingStatus;
@@ -20,6 +21,7 @@ type ReservationActionsProps = {
 export default function ReservationActions({
   requestId,
   propertyId,
+  buildingUnitId,
   dateDebut,
   dateFin,
   statut,
@@ -46,12 +48,23 @@ export default function ReservationActions({
     }
 
     if (next === "confirmee") {
-      await supabase.from("availability_blocks").insert({
-        property_id: propertyId,
-        date_debut: dateDebut,
-        date_fin: dateFin,
-        raison: "reserve",
-      });
+      if (buildingUnitId) {
+        await supabase.from("availability_blocks").insert({
+          building_unit_id: buildingUnitId,
+          property_id: null,
+          date_debut: dateDebut,
+          date_fin: dateFin,
+          raison: "reserve",
+        });
+      } else if (propertyId) {
+        await supabase.from("availability_blocks").insert({
+          property_id: propertyId,
+          building_unit_id: null,
+          date_debut: dateDebut,
+          date_fin: dateFin,
+          raison: "reserve",
+        });
+      }
     }
 
     setLoading(false);
@@ -72,9 +85,7 @@ export default function ReservationActions({
 
     const { error: blockError, released } = await releaseReservationAvailability(
       supabase,
-      propertyId,
-      dateDebut,
-      dateFin
+      { propertyId, buildingUnitId, dateDebut, dateFin }
     );
 
     if (blockError) {
@@ -105,8 +116,7 @@ export default function ReservationActions({
     router.refresh();
   }
 
-  const hadBlockedDates =
-    statut === "confirmee" || statut === "terminee";
+  const hadBlockedDates = statut === "confirmee" || statut === "terminee";
 
   const deleteMessage = hadBlockedDates
     ? `La réservation de ${clientName} sera supprimée et les dates indisponibles redeviendront disponibles sur le calendrier public.`

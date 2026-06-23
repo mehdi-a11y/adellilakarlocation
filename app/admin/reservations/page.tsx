@@ -44,7 +44,9 @@ export default async function AdminReservationsPage({
 
   let query = supabase
     .from("booking_requests")
-    .select("*, properties(titre, ville)")
+    .select(
+      "*, properties(titre, ville), building_units(label, buildings(titre, ville))"
+    )
     .order("created_at", { ascending: false });
 
   if (
@@ -93,13 +95,25 @@ export default async function AdminReservationsPage({
         </div>
       ) : (
         <div className="mt-8 space-y-4">
-          {requests.map((request) => (
+          {requests.map((request) => {
+            const unitInfo = request.building_units;
+            const propertyTitle = request.properties?.titre || unitInfo?.buildings?.titre || "Bien supprimé";
+            const unitLabel = unitInfo?.label;
+            const location = request.properties?.ville || unitInfo?.buildings?.ville;
+
+            return (
             <div key={request.id} className="card-surface p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="font-display text-lg font-semibold text-ink">
-                      {request.properties?.titre || "Bien supprimé"}
+                      {propertyTitle}
+                      {unitLabel && (
+                        <span className="font-normal text-ink-muted">
+                          {" "}
+                          — {unitLabel}
+                        </span>
+                      )}
                     </h2>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[request.statut]}`}
@@ -107,9 +121,7 @@ export default async function AdminReservationsPage({
                       {statusLabels[request.statut]}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-ink-muted">
-                    {request.properties?.ville}
-                  </p>
+                  <p className="mt-1 text-sm text-ink-muted">{location}</p>
                 </div>
                 <p className="text-lg font-bold text-ink">
                   {formatPrice(request.prix_total)}
@@ -153,6 +165,7 @@ export default async function AdminReservationsPage({
                 <ReservationActions
                   requestId={request.id}
                   propertyId={request.property_id}
+                  buildingUnitId={request.building_unit_id}
                   dateDebut={request.date_debut}
                   dateFin={request.date_fin}
                   statut={request.statut}
@@ -160,7 +173,8 @@ export default async function AdminReservationsPage({
                 />
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       )}
     </div>
