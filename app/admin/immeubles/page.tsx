@@ -5,6 +5,7 @@ import {
   getActiveUnitCount,
   getBuildingMinPrice,
 } from "@/lib/queries/buildings";
+import { isMissingRelationError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/server";
 import type { BuildingListItem } from "@/types/building";
 
@@ -17,6 +18,45 @@ export default async function AdminBuildingsPage() {
     .order("created_at", { ascending: false });
 
   if (error) {
+    if (isMissingRelationError(error, "buildings")) {
+      return (
+        <main>
+          <h1 className="heading-display text-3xl">Immeubles</h1>
+          <div className="card-surface mt-8 border-amber-200 bg-amber-50 p-6">
+            <h2 className="font-display text-lg font-semibold text-amber-900">
+              Configuration Supabase requise
+            </h2>
+            <p className="mt-2 text-sm text-amber-900/90">
+              Les tables immeubles ne sont pas encore créées dans votre base
+              Supabase. Exécutez le script SQL du projet, puis rechargez cette
+              page.
+            </p>
+            <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-amber-900/90">
+              <li>
+                Ouvrez{" "}
+                <a
+                  href="https://supabase.com/dashboard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline"
+                >
+                  Supabase → SQL Editor
+                </a>
+              </li>
+              <li>
+                Copiez tout le contenu de{" "}
+                <code className="rounded bg-white/70 px-1.5 py-0.5">
+                  supabase/buildings.sql
+                </code>{" "}
+                dans le dépôt
+              </li>
+              <li>Cliquez Run — le script est idempotent (relançable)</li>
+            </ol>
+          </div>
+        </main>
+      );
+    }
+
     throw new Error(error.message);
   }
 

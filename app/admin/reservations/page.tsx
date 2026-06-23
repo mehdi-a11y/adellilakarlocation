@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ReservationActions from "@/components/admin/ReservationActions";
 import { formatPrice } from "@/lib/i18n";
+import { isMissingRelationError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/server";
 import type { BookingStatus } from "@/types";
 import type { BookingRequestWithProperty } from "@/types/booking";
@@ -42,6 +43,12 @@ export default async function AdminReservationsPage({
 }) {
   const supabase = await createClient();
 
+  const statusFilter =
+    searchParams.statut &&
+    ["en_attente", "confirmee", "annulee", "terminee"].includes(searchParams.statut)
+      ? searchParams.statut
+      : null;
+
   let query = supabase
     .from("booking_requests")
     .select(
@@ -49,14 +56,33 @@ export default async function AdminReservationsPage({
     )
     .order("created_at", { ascending: false });
 
-  if (
-    searchParams.statut &&
-    ["en_attente", "confirmee", "annulee", "terminee"].includes(searchParams.statut)
-  ) {
-    query = query.eq("statut", searchParams.statut);
+  if (statusFilter) {
+    query = query.eq("statut", statusFilter);
   }
 
-  const { data } = await query;
+  let { data, error } = await query;
+
+  if (
+    error &&
+    (isMissingRelationError(error, "building_units") ||
+      isMissingRelationError(error, "buildings"))
+  ) {
+    let fallbackQuery = supabase
+      .from("booking_requests")
+      .select("*, properties(titre, ville)")
+      .order("created_at", { ascending: false });
+
+    if (statusFilter) {
+      fallbackQuery = fallbackQuery.eq("statut", statusFilter);
+    }
+
+    ({ data, error } = await fallbackQuery);
+  }
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
   const requests = (data ?? []) as BookingRequestWithProperty[];
 
   return (
